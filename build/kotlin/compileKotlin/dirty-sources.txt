@@ -1,0 +1,13 @@
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/App.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/FileLister/FileListerImp.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/FileLister/IFileLister.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/TextStripper/ITextStripper.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/TextStripper/TextStripperImp.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/UI/ConfigImp.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/UI/IConfig.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/DirectoryMaker/IDirectoryMaker.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/DirectoryMaker/DirectoryMakerImp.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/PTASorter/PTANoticeSorterImp.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/PTASorter/IPTANoticeSorter.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/ReferencePIDS/IReferencePIDs.kt
+/home/jorge/Desktop/DEV/noticesorter/src/main/kotlin/com/jorge/ReferencePIDS/ReferencePIDsImp.kt
