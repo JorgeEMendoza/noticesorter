@@ -35,8 +35,6 @@ class PTANoticeSorterImp(private val year: Int, private val ref: File, private v
         var errorFiles = ArrayList<String>()
 
         for(file in files){
-            ConfigImp.updateLabel("Processing notice ${files.lastIndex} out of ${files.size}")
-
             val fileName = file.nameWithoutExtension
             try {
                 val pid = textStripper.getText(file)
