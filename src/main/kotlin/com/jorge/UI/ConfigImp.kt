@@ -14,21 +14,13 @@ import javax.swing.JFrame.EXIT_ON_CLOSE
 
 class ConfigImp: ActionListener, IConfig {
 
-//    companion object{
-//        val updateLabel = {label: String ->
-//
-//            println("$label")
-//            labelProgress.text = "$label"
-//
-//        }
-//    }
-
     private val frame = JFrame("Property Tax Associates")
 
     private val panelYear = JPanel(GridBagLayout())
     private val panelPIDRef = JPanel(GridBagLayout())
     private val panelSearch = JPanel(GridBagLayout())
     private val panelDestination = JPanel(GridBagLayout())
+    private val panelOutput = JPanel(GridBagLayout())
     private val panelSearchButton = JPanel(GridBagLayout())
 
     private val c = GridBagConstraints()
@@ -41,6 +33,7 @@ class ConfigImp: ActionListener, IConfig {
     private val labelErrorPIDRef = JLabel("<html><font size='2' color=red>Error! Active PIDs field must not be empty.</font></html>")
     private val labelErrorSource = JLabel("<html><font size='2' color=red>Error! Source field must not be empty.</font></html>")
     private val labelErrorDestination = JLabel("<html><font size='2' color=red>Error! Destination field must not be empty.</font></html>")
+    private val labelErrorOutput = JLabel("<html><font size='2' color=red>Error! Output field must not be empty.</font></html>")
 
     private val labelYear = JLabel("Year: ")
     private val fieldYear = JTextField(4)
@@ -58,9 +51,11 @@ class ConfigImp: ActionListener, IConfig {
     private val fieldDestination = JTextField(30)
     private val searchDestination = JButton("...")
 
-    private val button = JButton("Sort")
+    private val labelOutput = JLabel("Output File: ")
+    private val fieldOutput = JTextField(30)
+    private val searchOutput = JButton("...")
 
-    private var labelProgress = JLabel("")
+    private val button = JButton("Sort")
 
     override fun init(){
 
@@ -69,9 +64,10 @@ class ConfigImp: ActionListener, IConfig {
         fieldYear.text = LocalDateTime.now().year.toString()
 
         button.addActionListener(this)
-        searchPIDRef.addActionListener(searchButtonListener())
-        searchSource.addActionListener(searchButtonListener())
-        searchDestination.addActionListener(searchButtonListener())
+        searchPIDRef.addActionListener(SearchButtonListener())
+        searchSource.addActionListener(SearchButtonListener())
+        searchDestination.addActionListener(SearchButtonListener())
+        searchOutput.addActionListener(SearchButtonListener())
 
         val labelDimension = Dimension(30, 25)
 
@@ -111,10 +107,15 @@ class ConfigImp: ActionListener, IConfig {
         labelErrorDestination.minimumSize = labelDimension
         labelErrorDestination.preferredSize = labelDimension
 
+        labelOutput.maximumSize = labelDimension
+        labelOutput.minimumSize = labelDimension
+        labelOutput.preferredSize = labelDimension
+
         labelErrorYear.isVisible = false
         labelErrorPIDRef.isVisible = false
         labelErrorSource.isVisible = false
         labelErrorDestination.isVisible = false
+        labelErrorOutput.isVisible = false
 
         cStart.fill = GridBagConstraints.HORIZONTAL
         cStart.gridx = 0
@@ -174,6 +175,11 @@ class ConfigImp: ActionListener, IConfig {
         panelDestination.add(searchDestination, cEnd)
         panelDestination.add(labelErrorDestination, cErrorRow)
 
+        panelOutput.add(labelOutput, cStart)
+        panelOutput.add(fieldOutput, cMiddle)
+        panelOutput.add(searchOutput, cEnd)
+        panelOutput.add(labelErrorOutput, cErrorRow)
+
         cEnd.fill = GridBagConstraints.HORIZONTAL
         cEnd.gridx = 3
         cEnd.gridy = 0
@@ -210,6 +216,12 @@ class ConfigImp: ActionListener, IConfig {
         c.gridx = 0
         c.gridy = 4
         c.weightx = 1.0
+        frame.add(panelOutput, c)
+
+        c.fill = GridBagConstraints.HORIZONTAL
+        c.gridx = 0
+        c.gridy = 5
+        c.weightx = 1.0
         frame.add(panelSearchButton, c)
 
         frame.defaultCloseOperation = EXIT_ON_CLOSE
@@ -223,6 +235,7 @@ class ConfigImp: ActionListener, IConfig {
         labelErrorPIDRef.isVisible = false
         labelErrorSource.isVisible = false
         labelErrorDestination.isVisible = false
+        labelErrorOutput.isVisible = false
 
         val year = if(fieldYear.text != null && fieldYear.text != ""){
                 fieldYear.text?.toInt()
@@ -235,10 +248,11 @@ class ConfigImp: ActionListener, IConfig {
         val ref = fieldPIDRef.text
         val source = fieldSource.text
         val destination = fieldDestination.text
+        val output = fieldOutput.text
 
 
-        if(year != null && ref != null && ref != "" && source != null && source != "" && destination != null && destination != ""){
-            val ptans: IPTANoticeSorter = PTANoticeSorterImp(year!!, File(ref), File(source), File(destination))
+        if(year != null && ref != null && ref != "" && source != null && source != "" && destination != null && destination != "" && output != null && output != ""){
+            val ptans: IPTANoticeSorter = PTANoticeSorterImp(year!!, File(ref), File(source), File(destination), File(output))
             ptans.init()
         }
         else{
@@ -246,10 +260,11 @@ class ConfigImp: ActionListener, IConfig {
             if(ref == null || ref == "" ) labelErrorPIDRef.isVisible = true
             if(source == null || source == "") labelErrorSource.isVisible = true
             if(destination == null || destination == "" ) labelErrorDestination.isVisible = true
+            if(output == null || output == "" ) labelErrorOutput.isVisible = true
         }
     }
 
-    private inner class searchButtonListener: ActionListener{
+    private inner class SearchButtonListener: ActionListener{
         override fun actionPerformed(e: ActionEvent){
             val fc = JFileChooser()
             var f : File
@@ -269,6 +284,9 @@ class ConfigImp: ActionListener, IConfig {
                 }
                 searchDestination -> {
                     fieldDestination.text = filepath
+                }
+                searchOutput -> {
+                    fieldOutput.text = filepath
                 }
                 else -> {
 

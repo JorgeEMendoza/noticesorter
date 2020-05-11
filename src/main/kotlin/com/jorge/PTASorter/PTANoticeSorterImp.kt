@@ -6,24 +6,29 @@ import com.jorge.FileLister.FileListerImp
 import com.jorge.FileLister.IFileLister
 import com.jorge.ReferencePIDS.IReferencePIDs
 import com.jorge.ReferencePIDS.ReferencePIDsImp
+import com.jorge.Report.IReport
+import com.jorge.Report.ReportImp
 import com.jorge.TextStripper.ITextStripper
 import com.jorge.TextStripper.TextStripperImp
 import com.jorge.UI.ConfigImp
 import java.io.File
 
-class PTANoticeSorterImp(private val year: Int, private val ref: File, private val source: File, private val destination: File): IPTANoticeSorter {
+class PTANoticeSorterImp(private val year: Int, private val ref: File, private val source: File, private val destination: File, private val output: File): IPTANoticeSorter {
 
     private lateinit var pidHarvester: IReferencePIDs
     private lateinit var referencePIDs: File
     private val fileReader: IFileLister = FileListerImp(source.toString())
     private val textStripper: ITextStripper = TextStripperImp(source.toString())
     private val directoryMaker: IDirectoryMaker = DirectoryMakerImp(destination.toString())
+    private val reportOutputMaker: IReport = ReportImp()
 
     override fun init(){
 
         textStripper.init()
         pidHarvester = ReferencePIDsImp(ref)
         val pids = pidHarvester.getReferencePIDs()
+        var successfulPIDs = ArrayList<String>()
+        var rejectedPIDs = ArrayList<String>()
 
 
         var files = fileReader.getFilesFromFolder()
@@ -42,7 +47,7 @@ class PTANoticeSorterImp(private val year: Int, private val ref: File, private v
                 successfulParse++
 
                 if(pids.indexOf(pid) != -1){
-
+                    successfulPIDs.add(pid)
                     if(directoryMaker.createDirectory(pid)){
                         file.renameTo(File("$destination/${pid}/Notices/${year} notice.pdf"))
                         currentClients++
@@ -51,18 +56,13 @@ class PTANoticeSorterImp(private val year: Int, private val ref: File, private v
                         println("error")
                     }
                 }else{
+                    rejectedPIDs.add(pid)
                     if(!File("$destination/rejects").exists()){
                         File("$destination/rejects").mkdir()
                     }
 
                     file.renameTo(File("$destination/rejects/$pid - 2020 notice"))
                 }
-
-
-
-
-
-
             }
             catch(e : Exception){
                 println("$fileName failed. Error: $e")
@@ -72,5 +72,10 @@ class PTANoticeSorterImp(private val year: Int, private val ref: File, private v
 
         println("Successfully parsed $successfulParse out of $fileCount")
         println("$currentClients notices belong to current clients out of $fileCount")
+        println("Successful PIDs:")
+        println(successfulPIDs)
+        println("Rejected PIDs:")
+        println(rejectedPIDs)
+        reportOutputMaker.makeReport(successfulPIDs, rejectedPIDs, output)
     }
 }
